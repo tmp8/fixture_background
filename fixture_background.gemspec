@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Thies C. Arntzen", "Norman Timmler"]
   s.email       = ["dev+fixture_background@tmp8.de"]
-  s.homepage    = "http://tmp8.de"
+  s.homepage    = "https://github.com/tmp8/fixture_background"
   s.summary     = %q{Generate fixtures from factories _in_ you testcode to speedup test-runs}
   s.description = %q{Generate fixtures from factories _in_ you testcode to speedup test-runs}
 

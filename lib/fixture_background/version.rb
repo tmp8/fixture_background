@@ -1,4 +1,4 @@
 module FixtureBackground
-  VERSION = "0.9"
+  VERSION = "0.9.0.1"
 end
 
