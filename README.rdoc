@@ -11,8 +11,6 @@ thies@tmp8.de 20110207
 
 in test_helper.rb:
 
-  require 'fixture_background'
-
   class ActiveSupport::TestCase
     include ::FixtureBackground::ActiveSupport::TestCase
   end
