@@ -1,0 +1,79 @@
+== Fixture Backgrounds
+
+Generate fixtures from factories _in_ you testcode to speedup test-runs!
+
+Requires shoulda 2.11.3 (exact version for now - sorry)
+
+thies@tmp8.de 20110207
+
+
+== Usage
+
+test_helper.rb:
+
+require 'fixture_background'
+
+class ActiveSupport::TestCase
+  include ::FixtureBackground::ActiveSupport::TestCase
+end
+
+
+some_test.rb:
+
+require 'test_helper'
+
+class TestTest < ActiveSupport::TestCase
+  background do
+    @hase = Hase.create(:name => "bunny")
+  end
+
+  context "with thies" do
+    background do
+      @thies = Person.create(:name => "thies")
+    end
+    
+    should "be cool" do
+      assert @hase
+      assert @thies
+      assert_nil @manuel
+      assert_nil @norman
+      assert_equal 1, Person.count
+    end
+
+    context "with manuel" do
+      background do
+        @manuel = Person.create(:name => "manuel")
+      end
+    
+      should "be cool" do
+        assert @hase
+        assert @thies
+        assert @manuel
+        assert_nil @norman
+        assert_equal 2, Person.count
+      end
+      
+      context "with norman" do
+        background do
+          @norman = Person.create(:name => "norman")
+        end
+      
+        should "be cool" do
+          assert @hase
+          assert @thies
+          assert @manuel
+          assert @norman
+          assert_equal 3, Person.count
+        end
+      end
+    end
+
+    should "nother truth" do
+      assert @hase
+      assert @thies
+      assert_nil @manuel
+      assert_nil @norman
+      assert_equal 1, Person.count
+    end
+  end
+end

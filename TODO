@@ -1,0 +1,2 @@
+* Issue warning when Time.now is used in background block as this could generate unexpected bahaviour
+* more that one backgound
