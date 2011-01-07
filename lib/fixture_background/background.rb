@@ -17,11 +17,10 @@ module FixtureBackground
 
     def background_valid?
       (IO.read("#{fixture_path}/.version") rescue nil) == background_signature
-      false
     end
 
     def background_signature
-      stack = caller.reject { |line| line =~ Regexp.new(__FILE__) }
+      stack = caller.reject { |line| line =~ Regexp.new(File.dirname(__FILE__)) }
       test_file_path = File.expand_path(stack.first.match(/^(.+\.rb):/)[1])
       block_syntax = ''
       IO.read(test_file_path).scan(/(?:\A|\n)([ \t]*)background\s(?:do|{)(.*?)\n\1end/m) do |match|
