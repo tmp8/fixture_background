@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Thies C. Arntzen", "Norman Timmler"]
   s.email       = ["dev+fixture_background@tmp8.de"]
-  s.homepage    = "tmp8.de"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "http://tmp8.de"
+  s.summary     = %q{Generate fixtures from factories _in_ you testcode to speedup test-runs}
+  s.description = %q{Generate fixtures from factories _in_ you testcode to speedup test-runs}
 
 #  s.rubyforge_project = "my_gem"
 
