@@ -54,11 +54,12 @@ module FixtureBackground
         
         yield klass
         
-        ivar_hash = {}
-        (klass.instance_variables - existing_ivars).each do |ivar|
-          record = klass.instance_variable_get(ivar)
-          ivar_hash[ivar.to_s] = [record.class.name, record.id] if record.class.respond_to? :find
+        ivars_with_value = (klass.instance_variables - existing_ivars).inject({}) do |memo, ivar|
+          memo[ivar] = klass.instance_variable_get(ivar)
+          memo
         end
+        
+        ivar_hash = IVars.serialize(ivars_with_value)
         
         File.open("#{@background_dir}/ivars.dump", 'w+') do |f|
           YAML.dump(ivar_hash, f)
@@ -73,7 +74,7 @@ module FixtureBackground
           
           fixtures = {}
           records.each do |record|
-            fixtures[table_name + record.id.to_s] = record.attributes
+            fixtures[table_name + record.id.to_s] = record.instance_variable_get(:@attributes)
           end
           
           File.open("#{@background_dir}/#{table_name}.yml", 'w+') do |f|

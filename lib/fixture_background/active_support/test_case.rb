@@ -4,7 +4,7 @@ module FixtureBackground
       extend ::ActiveSupport::Concern
   
       included do
-        class_inheritable_accessor :background_ivar_cache
+        class_inheritable_accessor :background_ivars
         class_inheritable_accessor :active_record_fixture_cache_resetted
 
         set_callback(:setup, :before, :reset_active_record_fixture_cache, {:prepend => true})
@@ -27,22 +27,12 @@ module FixtureBackground
   
       module InstanceMethods
         def setup_background_ivars
-          return unless File.exist?("#{fixture_path}/ivars.dump")
+          self.background_ivars ||= IVars.deserialize((YAML.load_file("#{fixture_path}/ivars.dump") rescue {})) 
 
-          fill_background_ivar_cache unless background_ivar_cache
-          background_ivar_cache.each do |ivar, record|
-            # deep clone the object
-            instance_variable_set(ivar, Marshal.load(Marshal.dump(record)))
-          end
-        end
-    
-        def fill_background_ivar_cache
-          bm = Benchmark.realtime do
-            self.background_ivar_cache = YAML.load_file("#{fixture_path}/ivars.dump")
-            background_ivar_cache.each do |ivar, (class_name, id)|
-              record = class_name.constantize.find(id)
-              self.background_ivar_cache[ivar] = record
-            end
+          deep_copy = Marshal.load(Marshal.dump(self.background_ivars))
+
+          deep_copy.each do |ivar, record|
+            instance_variable_set(ivar,record)
           end
         end
     
