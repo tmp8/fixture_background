@@ -1,11 +1,17 @@
 module Shoulda
   raise "fixture_background is only compatible with shoulda 2.11.3 installed #{VERSION}" if VERSION != "2.11.3"
 
+  module ClassMethods
+    def described_type
+      self.name.gsub(/Test.*/, '').constantize
+    end
+  end
+
   class Context
     attr_reader :fixture_background
     
     def full_class_name
-      (test_unit_class.name + full_name.gsub(/\s+/, '_')).camelcase
+      (test_unit_class.name + full_name.gsub(/[^a-zA-Z0-9]/, '_')).camelcase
     end
 
     def parent_fixture_background
@@ -19,9 +25,10 @@ module Shoulda
     end
     
     def class_for_test
-      @fixture_background ? @fixture_background.class_for_test : test_unit_class
+      (@fixture_background && @fixture_background.class_for_test) || 
+      (parent_fixture_background && FixtureBackground::Background.class_for_test(full_class_name, parent_fixture_background, test_unit_class)) || 
+      test_unit_class
     end
-
     
     #
     # the following functions are copied from shoulda/context.rb
@@ -29,11 +36,11 @@ module Shoulda
     
     def create_test_from_should_hash(klass, should)
       test_name = ["test:", full_name, "should", "#{should[:name]}. "].flatten.join(' ').to_sym
-
+    
       if klass.instance_methods.include?(test_name.to_s)
         warn "  * WARNING: '#{test_name}' is already defined"
       end
-
+    
       context = self
       klass.send(:define_method, test_name) do
         @shoulda_context = context
@@ -54,9 +61,9 @@ module Shoulda
       shoulds.each do |should|
         create_test_from_should_hash(klass, should)
       end
-
+    
       subcontexts.each { |context| context.build }
-
+    
       print_should_eventuallys
     end
   end

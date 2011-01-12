@@ -1,5 +1,22 @@
 module FixtureBackground
   class Background
+    
+    class << self
+      def class_for_test(full_class_name, background_to_use, test_unit_class)
+        klass = class_by_name(full_class_name) || Object.const_set(full_class_name, Class.new(test_unit_class))
+        klass.fixture_path = background_to_use.fixture_path
+        klass.fixtures :all
+        klass 
+      end
+
+      def class_by_name(class_name)
+        klass = Module.const_get(class_name)
+        klass.is_a?(Class) && klass
+      rescue NameError
+        return false
+      end
+    end
+    
     attr_reader :background_block
     
     def initialize(full_class_name, test_unit_class, parent, blk)
@@ -34,10 +51,7 @@ module FixtureBackground
     end
     
     def class_for_test
-      klass = Kernel.const_set(@full_class_name, Class.new(@test_unit_class))
-      klass.fixture_path = fixture_path
-      klass.fixtures :all
-      klass 
+      self.class.class_for_test(@full_class_name, self, @test_unit_class)
     end
   end
 end
