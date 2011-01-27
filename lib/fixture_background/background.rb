@@ -13,6 +13,10 @@ module FixtureBackground
           klass.controller_class = controller_class
         end 
 
+        if helper_class = (test_unit_class.respond_to?(:helper_class) && test_unit_class.helper_class)
+          klass.helper_class = helper_class
+        end 
+
         klass.fixture_path = background_to_use.fixture_path
         klass.fixtures :all
         klass 
