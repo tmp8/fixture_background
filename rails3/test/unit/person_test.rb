@@ -2,11 +2,13 @@ require 'test_helper'
 
 class PersonTest < ActiveSupport::TestCase
   background do
+    some_test_helper_returning_one
     @hase = Person.create(:name => "bunny")
   end
 
   context "with thies" do
     background do
+      some_test_helper_returning_one
       @thies = Person.create(:name => "thies")
     end
     

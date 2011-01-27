@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PeopleHelperTest < ActionView::TestCase
   background do 
+    some_test_helper_returning_one
     @person = Person.create(:name => "one")
   end
   
