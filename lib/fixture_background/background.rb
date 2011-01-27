@@ -3,19 +3,23 @@ module FixtureBackground
     
     class << self
       def class_for_test(full_class_name, background_to_use, test_unit_class)
-        klass = class_by_name(full_class_name) || Object.const_set(full_class_name, Class.new(test_unit_class))
-        
-        if helper_class = test_unit_class.instance_variable_get(:@helper_class)
-          klass.instance_variable_set(:@helper_class, helper_class)
-        end
+        class_by_name(full_class_name) || create_class(full_class_name, test_unit_class, background_to_use)
+      end
 
-        if controller_class = (test_unit_class.respond_to?(:controller_class) && test_unit_class.controller_class)
-          klass.controller_class = controller_class
-        end 
+      def create_class(full_class_name, parent_class, background_to_use)
+        klass = Class.new(parent_class)
+
+        # Rails infers the Class to be tested by the name of the testcase
+        klass.instance_eval <<-EOT
+          def name
+            "#{parent_class.name}"
+          end
+        EOT
 
         klass.fixture_path = background_to_use.fixture_path
         klass.fixtures :all
-        klass 
+        
+        Object.const_set(full_class_name, klass)
       end
 
       def class_by_name(class_name)
@@ -34,7 +38,7 @@ module FixtureBackground
       @parent = parent
       @background_block = blk
       
-      Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks) unless background_valid?
+      Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks, @test_unit_class) unless background_valid?
     end
     
     def ancestors_and_own_background_blocks

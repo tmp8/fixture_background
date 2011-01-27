@@ -1,7 +1,9 @@
 module FixtureBackground
   class Generator
-    def initialize(fixture_name, version, background_dir, blocks)
+    def initialize(fixture_name, version, background_dir, blocks, test_unit_class)
       @background_dir = background_dir
+      @test_unit_class = test_unit_class
+      
       remove_background_dir
       create_background_dir
       
@@ -49,7 +51,7 @@ module FixtureBackground
       end
       
       def dump_ivars
-        klass = Class.new
+        klass = @test_unit_class.new("collect_ivars")
         existing_ivars = klass.instance_variables
         
         yield klass
