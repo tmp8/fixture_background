@@ -6,15 +6,17 @@ Requires shoulda 2.11.3 (exact version for now - sorry)
 
 thies@tmp8.de 20110207
 
-
 == Usage
 
+see test/rails3 for a demo usage
+
 in test_helper.rb:
+
+  require 'fixture_background'
 
   class ActiveSupport::TestCase
     include ::FixtureBackground::ActiveSupport::TestCase
   end
-
 
 in some_test.rb:
 
