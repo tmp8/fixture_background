@@ -3,6 +3,7 @@ module FixtureBackground
     
     class << self
       def class_for_test(full_class_name, background_to_use, test_unit_class)
+        full_class_name = full_class_name.gsub("::", "__")
         class_by_name(full_class_name) || create_class(full_class_name, test_unit_class, background_to_use)
       end
 
