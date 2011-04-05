@@ -1,9 +1,10 @@
 module FixtureBackground
   class Generator
     def initialize(fixture_name, version, background_dir, blocks, test_unit_class)
-      @background_dir = background_dir
-      @test_unit_class = test_unit_class
-      
+      @fixture_name, @version, @background_dir, @blocks, @test_unit_class = fixture_name, version, background_dir, blocks, test_unit_class
+    end
+    
+    def generate!
       remove_background_dir
       create_background_dir
       
@@ -15,7 +16,7 @@ module FixtureBackground
         
         bm = Benchmark.realtime do
           dump_ivars do |klass|
-            blocks.each do |block|
+            @blocks.each do |block|
               klass.instance_eval(&block)
             end
           end
@@ -23,10 +24,10 @@ module FixtureBackground
         end
         
         File.open("#{@background_dir}/.version", 'w+') do |f| 
-          f.write version
+          f.write @version
         end
         
-        puts "Instanciating #{fixture_name} took #{bm}ms"
+        puts "Instanciating #{@fixture_name} took #{bm}ms"
       end
     rescue Exception
       remove_background_dir

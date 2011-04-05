@@ -15,7 +15,9 @@ module FixtureBackground
             "#{parent_class.name}"
           end
         EOT
-
+        
+        background_to_use.generate!
+        
         klass.fixture_path = background_to_use.fixture_path
         klass.fixtures :all
         
@@ -38,7 +40,11 @@ module FixtureBackground
       @parent = parent
       @background_block = blk
       
-      Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks, @test_unit_class) unless background_valid?
+      @generator = Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks, @test_unit_class) unless background_valid?
+    end
+    
+    def generate!
+      @generator.generate! if @generator
     end
     
     def ancestors_and_own_background_blocks

@@ -21,7 +21,7 @@ module Shoulda
     end
     
     def background(&blk)
-      @fixture_background = FixtureBackground::Background.new(full_class_name, test_unit_class, parent_fixture_background, blk) 
+      @fixture_background = FixtureBackground::Background.new(full_class_name, test_unit_class, parent_fixture_background, blk)
     end
     
     def class_for_test
