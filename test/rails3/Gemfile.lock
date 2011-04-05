@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    fixture_background (0.9.2)
+    fixture_background (0.9.5)
 
 GEM
   remote: http://rubygems.org/
