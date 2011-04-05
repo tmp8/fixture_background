@@ -8,10 +8,6 @@ class PersonTest < ActiveSupport::TestCase
     @hase = Person.create(:name => "bunny")
   end
 
-  def instance_test_helper_defined_after_background_returning_one
-    1
-  end
-
   context "with thies" do
     background do
       some_test_helper_returning_one
@@ -26,7 +22,7 @@ class PersonTest < ActiveSupport::TestCase
       assert_nil @norman
       assert_equal 2, Person.count
     end
-
+  
     context "with manuel" do
       background do
         @manuel = Person.create(:name => "manuel")
@@ -54,7 +50,7 @@ class PersonTest < ActiveSupport::TestCase
         end
       end
     end
-
+  
     should "nother truth" do
       assert @hase
       assert @thies
@@ -63,8 +59,9 @@ class PersonTest < ActiveSupport::TestCase
       assert_equal 2, Person.count
     end
   end
-  
-  protected
-  
+
+  def instance_test_helper_defined_after_background_returning_one
+    1
+  end
 
 end

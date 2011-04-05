@@ -17,10 +17,23 @@ module FixtureBackground
           end
         EOT
         
-        background_to_use.generate!
+        klass.class_eval <<-EOT
+          cattr_accessor :fixture_background
+          @@background_generated = false
+          
+          def initialize(*args)
+            super
+
+            if (background = fixture_background) && !@@background_generated
+              background.generate!
+              @@background_generated = true
+              self.class.fixtures :all
+            end
+          end
+        EOT
         
+        klass.fixture_background = background_to_use
         klass.fixture_path = background_to_use.fixture_path
-        klass.fixtures :all
         
         Object.const_set(full_class_name, klass)
       end
