@@ -10,8 +10,12 @@ module FixtureBackground
       
       transaction_with_rollback do
         (ActiveRecord::Base.connection.tables - ["schema_migrations"]).each do |table_name|
-          klass = table_name.classify.constantize
-          klass.delete_all
+          begin
+            klass = table_name.classify.constantize
+            klass.delete_all
+          rescue NameError # do not die on tables that have no model
+            puts "cannot delete from #{table_name} as no model exists"
+          end
         end
         
         bm = Benchmark.realtime do
@@ -71,17 +75,21 @@ module FixtureBackground
       
       def dump_fixtures
         (ActiveRecord::Base.connection.tables - ["schema_migrations"]).each do |table_name|
-          klass = table_name.classify.constantize
+          begin
+            klass = table_name.classify.constantize
 
-          records = klass.all
+            records = klass.all
           
-          fixtures = {}
-          records.each do |record|
-            fixtures[table_name + record.id.to_s] = record.instance_variable_get(:@attributes)
-          end
+            fixtures = {}
+            records.each do |record|
+              fixtures[table_name + record.id.to_s] = record.instance_variable_get(:@attributes)
+            end
           
-          File.open("#{@background_dir}/#{table_name}.yml", 'w+') do |f|
-            YAML.dump(fixtures, f)
+            File.open("#{@background_dir}/#{table_name}.yml", 'w+') do |f|
+              YAML.dump(fixtures, f)
+            end
+          rescue NameError # do not die on tables that have no model
+            puts "cannot dump from #{table_name} as no model exists"
           end
         end
       end
