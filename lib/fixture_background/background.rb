@@ -1,4 +1,13 @@
 module FixtureBackground
+  class << self
+    
+    def clean_database!
+      (ActiveRecord::Base.connection.tables - ["schema_migrations"]).each do |table_name|
+        ActiveRecord::Base.connection.execute "DELETE FROM #{table_name}"
+      end
+    end
+  end
+  
   class Background
     
     class << self
@@ -20,14 +29,21 @@ module FixtureBackground
         klass.class_eval <<-EOT
           cattr_accessor :fixture_background
           @@background_generated = false
+          @@fixtures_enabled = false
           
           def initialize(*args)
             super
 
-            if (background = fixture_background) && !@@background_generated
-              background.generate!
-              @@background_generated = true
-              self.class.fixtures :all
+            if background = fixture_background
+              if !@@background_generated
+                background.generate!
+                @@background_generated = true
+              end
+              if !@@fixtures_enabled
+                self.class.fixtures :all
+                self.class.teardown_suite { FixtureBackground.clean_database! }
+                @@fixtures_enabled = true
+              end
             end
           end
         EOT
@@ -53,7 +69,7 @@ module FixtureBackground
       @full_class_name = full_class_name
       @parent = parent
       @background_block = blk
-      
+      FixtureBackground.clean_database!
       @generator = Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks, @test_unit_class) unless background_valid?
     end
     

@@ -4,4 +4,4 @@ require 'fixture_background/generator'
 require 'fixture_background/ivars'
 require 'fixture_background/shoulda'
 require 'fixture_background/active_support/test_case'
-
+require 'mini_test/test_case'

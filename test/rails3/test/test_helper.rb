@@ -8,7 +8,7 @@ class ActiveSupport::TestCase
   
   fixtures :all
   
-  def some_test_helper_returning_one
+  def test_helper_returning_one
     1
   end
 end  

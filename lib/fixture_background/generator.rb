@@ -9,14 +9,6 @@ module FixtureBackground
       create_background_dir
       
       transaction_with_rollback do
-        (ActiveRecord::Base.connection.tables - ["schema_migrations"]).each do |table_name|
-          begin
-            klass = table_name.classify.constantize
-            klass.delete_all
-          rescue NameError # do not die on tables that have no model
-            puts "cannot delete from #{table_name} as no model exists"
-          end
-        end
         
         bm = Benchmark.realtime do
           dump_ivars do |klass|
@@ -39,6 +31,7 @@ module FixtureBackground
     end
     
     private
+    
       def transaction_with_rollback
         ActiveRecord::Base.connection.increment_open_transactions
         ActiveRecord::Base.connection.begin_db_transaction
@@ -77,9 +70,10 @@ module FixtureBackground
         (ActiveRecord::Base.connection.tables - ["schema_migrations"]).each do |table_name|
           begin
             klass = table_name.classify.constantize
-
+            
             records = klass.all
-          
+            next if records.empty?
+            
             fixtures = {}
             records.each do |record|
               fixtures[table_name + record.id.to_s] = record.instance_variable_get(:@attributes)

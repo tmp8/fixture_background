@@ -3,14 +3,25 @@ require 'test_helper'
 class PersonTest < ActiveSupport::TestCase
   
   background do
-    some_test_helper_returning_one
+    test_helper_returning_one
     instance_test_helper_defined_after_background_returning_one
     @hase = Person.create(:name => "bunny")
   end
 
+  should "without context" do
+    assert @hase
+    assert_nil @thies
+    assert_nil @manuel
+    assert_nil @norman
+  end
+  
+  should "not create post.yml" do
+    assert !File.exist?(File.dirname(__FILE__) + '/../backgrounds/person_test/posts.yml')
+  end
+
   context "with thies" do
     background do
-      some_test_helper_returning_one
+      test_helper_returning_one
       instance_test_helper_defined_after_background_returning_one
       @thies = Person.create(:name => "thies")
     end
@@ -59,9 +70,15 @@ class PersonTest < ActiveSupport::TestCase
       assert_equal 2, Person.count
     end
   end
+  
+  private
+    def instance_test_helper_defined_after_background_returning_one
+      1
+    end
+end
 
-  def instance_test_helper_defined_after_background_returning_one
-    1
+class ZZZEmptyDatabaseTest < ActiveSupport::TestCase  
+  should "have a clean database" do
+    assert_equal 0, Person.count
   end
-
 end
