@@ -6,9 +6,6 @@ module FixtureBackground
       included do
         class_inheritable_accessor :background_ivars
         class_inheritable_accessor :active_record_fixture_cache_resetted
-
-        set_callback(:setup, :before, :reset_active_record_fixture_cache, {:prepend => true})
-        set_callback(:setup, :before, :setup_background_ivars)
       end
 
       module ClassMethods
@@ -21,11 +18,14 @@ module FixtureBackground
         end
         
         def background(&blk)
-          @fixture_background = FixtureBackground::Background.new(name, self, nil, blk) 
+          set_callback(:setup, :before, :reset_active_record_fixture_cache, {:prepend => true})
+          set_callback(:setup, :before, :setup_background_ivars)
+          @fixture_background = FixtureBackground::Background.new(name, self, nil, blk)
         end
       end
   
       module InstanceMethods
+        
         def setup_background_ivars
           self.background_ivars ||= IVars.deserialize((YAML.load_file("#{fixture_path}/ivars.dump") rescue {})) 
 

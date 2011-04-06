@@ -2,12 +2,31 @@ require 'test_helper'
 
 class PersonTest < ActiveSupport::TestCase
   
+  setup do
+    @instance_var_from_setup = nil
+  end
+  
   background do
-    test_helper_returning_one
+    some_test_helper_returning_one
     instance_test_helper_defined_after_background_returning_one
     @hase = Person.create(:name => "bunny")
+    @instance_var_from_setup = @hase
   end
-
+  
+  should "be set from background" do
+    assert_not_nil @instance_var_from_setup
+  end  
+  
+  context "setup instance vars" do
+    background do
+      @instance_var_from_setup = Person.create(:name => "igel")
+    end
+    
+    should "be set from background" do
+      assert_not_nil @instance_var_from_setup
+    end
+  end
+  
   should "without context" do
     assert @hase
     assert_nil @thies
@@ -18,10 +37,10 @@ class PersonTest < ActiveSupport::TestCase
   should "not create post.yml" do
     assert !File.exist?(File.dirname(__FILE__) + '/../backgrounds/person_test/posts.yml')
   end
-
+  
   context "with thies" do
     background do
-      test_helper_returning_one
+      some_test_helper_returning_one
       instance_test_helper_defined_after_background_returning_one
       @thies = Person.create(:name => "thies")
     end
