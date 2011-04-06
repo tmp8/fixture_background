@@ -18,8 +18,6 @@ module FixtureBackground
         end
         
         def background(&blk)
-          set_callback(:setup, :before, :reset_active_record_fixture_cache, {:prepend => true})
-          set_callback(:setup, :before, :setup_background_ivars)
           @fixture_background = FixtureBackground::Background.new(name, self, nil, blk)
         end
       end

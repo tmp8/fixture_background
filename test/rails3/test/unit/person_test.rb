@@ -96,7 +96,23 @@ class PersonTest < ActiveSupport::TestCase
     end
 end
 
-class ZZZEmptyDatabaseTest < ActiveSupport::TestCase  
+class PersonWithoutGlobalBackgroundTest < ActiveSupport::TestCase
+
+  context "main context" do
+  
+    background do
+      @person = Person.create(:name => "person")
+    end
+        
+    context "without explicit background" do
+      should "instantiate ivars" do
+        assert_not_nil @person
+      end
+    end
+  end
+end
+
+class ZZZEmptyDatabaseTest < ActiveSupport::TestCase
   should "have a clean database" do
     assert_equal 0, Person.count
   end

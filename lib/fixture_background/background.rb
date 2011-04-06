@@ -69,8 +69,15 @@ module FixtureBackground
       @full_class_name = full_class_name
       @parent = parent
       @background_block = blk
+      
       FixtureBackground.clean_database!
-      @generator = Generator.new(@full_class_name, background_signature, fixture_path, ancestors_and_own_background_blocks, @test_unit_class) unless background_valid?
+      test_unit_class.set_callback(:setup, :before, :reset_active_record_fixture_cache, {:prepend => true})
+      test_unit_class.set_callback(:setup, :before, :setup_background_ivars)  
+      
+      @generator = Generator.new(
+        @full_class_name, background_signature, fixture_path,
+        ancestors_and_own_background_blocks, @test_unit_class
+      ) unless background_valid?
     end
     
     def generate!
