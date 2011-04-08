@@ -117,3 +117,46 @@ class ZZZEmptyDatabaseTest < ActiveSupport::TestCase
     assert_equal 0, Person.count
   end
 end
+
+
+class DontInheritTestsFromParentTestClassTest < ActiveSupport::TestCase
+  
+  context "index" do
+    context "sports" do
+      background do
+      end
+
+      should "ha" do
+        assert_this_line_only_executed_once
+      end
+    end
+    
+    context "event_show_back_button_path" do
+      should "da" do
+        assert_this_line_only_executed_once
+      end
+    end
+  end
+  
+  should "pa" do
+    assert_this_line_only_executed_once
+  end
+
+  test "test" do
+    assert_this_line_only_executed_once
+  end
+  
+  def test_my_shit
+    assert_this_line_only_executed_once
+  end
+
+  private
+  
+    def assert_this_line_only_executed_once
+      key = caller[0]
+      $assert_this_line_only_executed_once_memo ||= {}
+      assert ! $assert_this_line_only_executed_once_memo[key]
+      $assert_this_line_only_executed_once_memo[key] = true
+    end
+end
+  

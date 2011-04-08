@@ -22,5 +22,10 @@ class MiniTest::Unit::TestCase
     def teardown_suite(&block)
       (self.teardown_suite_blocks ||= []) << block
     end
+    
+    alias_method :public_instance_methods_without_forced_false, :public_instance_methods
+    def public_instance_methods(flag)
+      public_instance_methods_without_forced_false(false)
+    end
   end
 end
