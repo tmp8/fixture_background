@@ -83,7 +83,7 @@ module FixtureBackground
               YAML.dump(fixtures, f)
             end
           rescue NameError # do not die on tables that have no model
-            puts "cannot dump from #{table_name} as no model exists"
+            # puts "cannot dump from #{table_name} as no model exists"
           end
         end
       end
